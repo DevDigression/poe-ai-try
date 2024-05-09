@@ -11,7 +11,7 @@ from telegram.ext import (
 )
 from dotenv import load_dotenv
 from openai import OpenAI
-from functions import functions, run_function
+from .functions import functions, run_function
 
 CODE_PROMPT = """
 Here are two input:output examples for code generation. Please use these and follow the styling for future requests that you think are pertinent to the request.
