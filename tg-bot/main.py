@@ -1,7 +1,13 @@
 import os
 import logging
 from telegram import Update
-from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
+from telegram.ext import (
+    ApplicationBuilder,
+    CommandHandler,
+    ContextTypes,
+    MessageHandler,
+    filters,
+)
 from dotenv import load_dotenv
 from openai import OpenAI
 
@@ -48,7 +54,7 @@ async def transcribe_message(update: Update, context: ContextTypes.DEFAULT_TYPE)
             f"Transcript finished:\n {transcript.text}"
         )
 
-    if __name__ == '__main__':
+  if __name__ == '__main__':
       application = ApplicationBuilder().token(tg_bot_token).build()
 
       start_handler = CommandHandler('start', start)
