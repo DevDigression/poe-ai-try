@@ -16,7 +16,6 @@ load_dotenv()
 openai = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 tg_bot_token = os.getenv("TG_BOT_TOKEN")
 
-
 messages = [{
   "role": "system",
   "content": "You are a helpful assistant that answers questions."
@@ -54,15 +53,15 @@ async def transcribe_message(update: Update, context: ContextTypes.DEFAULT_TYPE)
             f"Transcript finished:\n {transcript.text}"
         )
 
-  if __name__ == '__main__':
-      application = ApplicationBuilder().token(tg_bot_token).build()
+if __name__ == '__main__':
+    application = ApplicationBuilder().token(tg_bot_token).build()
 
-      start_handler = CommandHandler('start', start)
-      chat_handler = MessageHandler(filters.TEXT & (~filters.COMMAND), chat)
-      voice_handler = MessageHandler(filters.VOICE, transcribe_message)
+    start_handler = CommandHandler('start', start)
+    chat_handler = MessageHandler(filters.TEXT & (~filters.COMMAND), chat)
+    voice_handler = MessageHandler(filters.VOICE, transcribe_message)
 
-      application.add_handler(start_handler)
-      application.add_handler(chat_handler)
-      application.add_handler(voice_handler)
+    application.add_handler(start_handler)
+    application.add_handler(chat_handler)
+    application.add_handler(voice_handler)
 
-      application.run_polling()
+    application.run_polling()
