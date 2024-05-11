@@ -12,11 +12,19 @@ def python_math_execution(math_string):
   except:
     return 'invalid code generated'
 
+def generate_image(prompt: str):
+    if "generate an image" in prompt.lower():
+        return "Sure, I'll get right on that!"
+    else:
+        return "No suitable image type found for the prompt."
+    
 def run_function(name: str, args: dict):
   if name == "svg_to_png_bytes":
       return svg_to_png_bytes(args["svg_string"])
   elif name == "python_math_execution":
       return python_math_execution(args["math_string"])
+  elif name == "generate_image":
+      return generate_image(args["prompt"])
   else:
       return None
 
@@ -59,4 +67,22 @@ functions = [
             },
         },
     },
+    {
+       "type": "function",
+        "function": {
+        "name": "generate_image",
+        "description": "Generates an image based on a user's prompt",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "prompt": {
+                    "type": "string",
+                    "description": "A user's prompt suggesting the type of image to generate",
+                },
+            },
+            "required": ["prompt"],
+        },
+      }
+    }
 ]
+

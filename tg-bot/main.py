@@ -57,7 +57,8 @@ async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
       if name == 'svg_to_png_bytes':
         await context.bot.send_photo(chat_id=update.effective_chat.id,
                                      photo=response)
-
+      if name == 'generate_image':
+        await image(update, context)
       # Generate the final response
       final_response = openai.chat.completions.create(
           model="gpt-3.5-turbo",
