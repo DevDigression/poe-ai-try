@@ -1,46 +1,32 @@
 import os
-import logging
-from telegram import Update
-from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
-from dotenv import load_dotenv
-from openai import OpenAI
+import replicate
 
-load_dotenv()
+training_id = os.getenv("REPLICATE_TRAINING_ID")
+training = replicate.trainings.get(training_id)
 
-openai = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-tg_bot_token = os.getenv("TG_BOT_TOKEN")
+print(training)
 
+training.reload()
 
-messages = [{
-  "role": "system",
-  "content": "You are a helpful assistant that answers questions."
-}]
+prompt = """[INST] <<SYS>>\
+Use the Input to provide a summary of a conversation.
+<</SYS>>
 
-logging.basicConfig(
-  format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-  level=logging.INFO)
+Input:
+Harry: Who are you?
+Hagrid: Rubeus Hagrid, Keeper of Keys and Grounds at Hogwarts. Of course, you know all about Hogwarts.
+Harry: Sorry, no.
+Hagrid: No? Blimey, Harry, did you never wonder where yer parents learned it all?
+Harry: All what?
+Hagrid: Yer a wizard, Harry.
+Harry: I-- I'm a what?
+Hagrid: A wizard! And a thumpin' good 'un, I'll wager, once you've been trained up a bit. [/INST]
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-  await context.bot.send_message(chat_id=update.effective_chat.id,
-                                 text="I'm a bot, please talk to me!")
+Summary: """
 
-async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
-  messages.append({"role": "user", "content": update.message.text})
-  completion = openai.chat.completions.create(model="gpt-3.5-turbo",
-                                              messages=messages)
-  completion_answer = completion.choices[0].message
-  messages.append(completion_answer)
-
-  await context.bot.send_message(chat_id=update.effective_chat.id,
-                                 text=completion_answer.content)
-
-if __name__ == '__main__':
-  application = ApplicationBuilder().token(tg_bot_token).build()
-
-  start_handler = CommandHandler('start', start)
-  chat_handler = CommandHandler('chat', chat)
-
-  application.add_handler(start_handler)
-  application.add_handler(chat_handler)
-
-  application.run_polling()
+output = replicate.run(
+  training.output["version"],
+  input={"prompt": prompt, "stop_sequences": "</s>"}
+)
+for s in output:
+  print(s, end="", flush=True)
