@@ -222,8 +222,11 @@ if __name__ == '__main__':
 
   start_handler = CommandHandler('start', start)
   chat_handler = MessageHandler(filters.TEXT & (~filters.COMMAND), assistant_chat)
+  voice_handler = MessageHandler(filters.VOICE, transcribe_message)
 
   application.add_handler(start_handler)
   application.add_handler(chat_handler)
+  application.add_handler(voice_handler)
 
   application.run_polling()
+
